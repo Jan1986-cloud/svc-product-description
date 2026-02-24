@@ -172,17 +172,21 @@ def has_unlimited(email: str) -> bool:
         return False
 
 
-def has_per_use_payment(email: str, use_number: int) -> bool:
+
+
+
+
+
+def count_per_use_payments(email: str) -> int:
     try:
         with db() as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT COUNT(*) as cnt FROM payments WHERE email = %s AND tier = 'per_use'", (email,))
                 row = cur.fetchone()
-                return (row["cnt"] if row else 0) >= use_number
+                return row["cnt"] if row else 0
     except Exception as e:
-        logger.error(f"DB has_per_use_payment error: {e}")
-        return False
-
+        logger.error(f"DB count_per_use_payments error: {e}")
+        return 0
 
 def save_payment_record(email: str, tier: str, amount: int):
     try:
@@ -229,16 +233,15 @@ def get_total_generations() -> int:
 
 def check_pricing(email: str):
     request_count = get_usage(email)
-    if request_count == 0:
+    if has_unlimited(email):
         return None
-    elif request_count <= 2:
-        if not has_per_use_payment(email, request_count):
-            return {"requires_payment": True, "tier": "per_use", "price": 0.99, "request_count": request_count}
+    per_use_count = count_per_use_payments(email)
+    allowed_generations = 1 + (per_use_count * 5)
+    if request_count < allowed_generations:
         return None
-    else:
-        if not has_unlimited(email):
-            return {"requires_payment": True, "tier": "unlimited", "price": 4.99, "request_count": request_count}
-        return None
+    if per_use_count >= 2:
+        return {"requires_payment": True, "tier": "unlimited", "price": 4.99, "request_count": request_count}
+    return {"requires_payment": True, "tier": "per_use", "price": 0.99, "request_count": request_count}
 
 
 # ── App ───────────────────────────────────────────────────────────────────────
