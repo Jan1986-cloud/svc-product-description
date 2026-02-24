@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sudo railway up --detach -s svc-test-service 2>&1)",
+      "Bash(sudo railway logs -s svc-test-service --num 30 2>&1)",
+      "Bash(sudo railway logs -s svc-test-service 2>&1 | tail -30)",
+      "Bash(curl -s https://svc-test-service-production.up.railway.app/health 2>&1)",
+      "Bash(curl -s -X POST https://svc-test-service-production.up.railway.app/generate \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"name\":\"Test\",\"email\":\"test@test.com\",\"input\":\"RoboServe - autonome AI diensten\"}' 2>&1)",
+      "Bash(pip index versions google-genai 2>/dev/null | head -3 || echo \"check done\")",
+      "Bash(sudo railway logs -s svc-test-service 2>&1 | tail -25)",
+      "Bash(curl -s https://svc-test-service-production.up.railway.app/health && echo \"\" && \\\\\ncurl -s -X POST https://svc-test-service-production.up.railway.app/generate \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"name\":\"Test\",\"email\":\"test@test.com\",\"input\":\"RoboServe - autonome AI diensten\"}' 2>&1)",
+      "Bash(curl -s -X POST https://svc-test-service-production.up.railway.app/webhook/stripe \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"email\":\"jan@pvmonteur.nl\",\"name\":\"Jan\",\"result\":\"RoboServe: Ontketen ongekende efficiëntie, aangedreven door autonome AI.\"}' 2>&1)",
+      "Bash(sudo railway variables -s svc-test-service 2>&1)",
+      "Bash(sudo railway variable set SMTP_PASS=\"bynm inwa wyia obob\" -s svc-test-service 2>&1)",
+      "Bash(sleep 20 && curl -s -X POST https://svc-test-service-production.up.railway.app/webhook/stripe \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"email\":\"jan@pvmonteur.nl\",\"name\":\"Jan\",\"result\":\"RoboServe: Ontketen ongekende efficiëntie, aangedreven door autonome AI.\"}' 2>&1)",
+      "Bash(sudo railway variable list -s MariaDB 2>&1)",
+      "Bash(sudo railway variable set MARIADB_PRIVATE_HOST=\"mariadb.railway.internal\" MARIADB_PRIVATE_PORT=\"3306\" MARIADB_DATABASE=\"railway\" MARIADB_USER=\"railway\" MARIADB_PASSWORD='WMgviZNI!svXOtkTsxZLzvBqdS0whyj_' -s svc-test-service 2>&1)",
+      "Bash(sudo railway variable list -s svc-test-service 2>&1 | grep -A1 MARIADB_PASSWORD)",
+      "Bash(python3 /tmp/setvar.py && rm /tmp/setvar.py)",
+      "Bash(curl -s -X POST \"https://www.roboserve.eu/wp-json/wp/v2/pages/250\" -H \"Content-Type: application/json\" -u \"carl:or4x tnPU kKBZ r2zD txst LY2W\" -d @/home/vulpe/roboserve-test-service/payload.json 2>&1 | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('status:', d.get\\('status','?'\\), '| link:', d.get\\('link','?'\\)\\)\")",
+      "Bash(python3 -c \"\nimport json\nwith open\\('/home/vulpe/roboserve-test-service/payload.json'\\) as f:\n    d = json.load\\(f\\)\nd['status'] = 'publish'\nwith open\\('/home/vulpe/roboserve-test-service/payload.json', 'w'\\) as f:\n    json.dump\\(d, f\\)\nprint\\('done'\\)\n\")",
+      "Bash(sleep 60 && sudo railway logs -s svc-test-service 2>&1 | tail -20)",
+      "Bash(echo \"=== /health ===\" && curl -s https://svc-test-service-production.up.railway.app/health)",
+      "Bash(echo \"=== /generate \\(1e aanroep\\) ===\" && curl -s -X POST https://svc-test-service-production.up.railway.app/generate -H \"Content-Type: application/json\" -d '{\"name\":\"Test\",\"email\":\"newtest@test.com\",\"input\":\"RoboServe - autonome AI diensten\"}' | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('result:', d.get\\('result'\\)\\); print\\('score:', d.get\\('score'\\)\\); print\\('rounds:', d.get\\('rounds'\\)\\); print\\('image:', \\('aanwezig \\(' + str\\(len\\(d['image']\\)\\) + ' chars\\)'\\) if d.get\\('image'\\) else 'ONTBREEKT'\\); print\\('error:', d.get\\('detail','geen'\\)\\)\")",
+      "Bash(sudo railway logs -s svc-test-service 2>&1 | grep -i \"image\\\\|banner\\\\|inline\\\\|generate_content\\\\|flash-preview\" | tail -10)",
+      "WebSearch",
+      "Bash(sleep 60 && sudo railway logs -s svc-test-service 2>&1 | tail -10)",
+      "Bash(echo \"=== TEST 1: /health ===\" && curl -s https://svc-test-service-production.up.railway.app/health && echo \"\" && echo \"=== TEST 2: /generate \\(1e aanroep\\) ===\" && curl -s -X POST https://svc-test-service-production.up.railway.app/generate -H \"Content-Type: application/json\" -d '{\"name\":\"Jan\",\"email\":\"deploy-test-001@test.com\",\"input\":\"RoboServe - autonome AI diensten die 24/7 voor je werken\"}' | python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('result:', d.get\\('result','ERROR'\\)\\); print\\('score:', d.get\\('score'\\)\\); print\\('rounds:', d.get\\('rounds'\\)\\); img=d.get\\('image',''\\); print\\('image:', \\('aanwezig \\('+str\\(len\\(img\\)\\)+' chars\\)'\\) if img else 'ONTBREEKT'\\)\")",
+      "Bash(echo \"=== TEST 3: /generate \\(2e aanroep zelfde email - verwacht free_limit_reached\\) ===\" && curl -s -X POST https://svc-test-service-production.up.railway.app/generate -H \"Content-Type: application/json\" -d '{\"name\":\"Jan\",\"email\":\"deploy-test-001@test.com\",\"input\":\"RoboServe\"}' && echo \"\" && echo \"=== TEST 4: /webhook/stripe ===\" && curl -s -X POST https://svc-test-service-production.up.railway.app/webhook/stripe -H \"Content-Type: application/json\" -d '{\"email\":\"jan@pvmonteur.nl\",\"name\":\"Jan\",\"result\":\"RoboServe: Jouw AI-krachtpatser, altijd aan het werk.\"}')",
+      "WebFetch(domain:www.roboserve.eu)"
+    ]
+  }
+}
